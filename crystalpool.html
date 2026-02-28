@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrystalPool — Pool Maintenance & Construction</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep: #0a1628;
+    --navy: #0d2040;
+    --blue: #1565c0;
+    --sky: #29b6f6;
+    --aqua: #00e5ff;
+    --white: #f0f8ff;
+    --muted: #8fafc7;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--deep);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 5%;
+    background: rgba(10,22,40,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,229,255,0.1);
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; font-weight: 900;
+    color: var(--white);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--aqua); }
+  nav ul { list-style: none; display: flex; gap: 2.5rem; }
+  nav a {
+    text-decoration: none; color: var(--muted);
+    font-size: 0.9rem; font-weight: 500; letter-spacing: 0.05em;
+    text-transform: uppercase; transition: color 0.3s;
+  }
+  nav a:hover { color: var(--aqua); }
+  .nav-cta {
+    background: var(--aqua); color: var(--deep) !important;
+    padding: 0.6rem 1.4rem; border-radius: 50px; font-weight: 700 !important;
+  }
+  .nav-cta:hover { background: var(--sky); color: var(--deep) !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    position: relative; overflow: hidden;
+    padding: 0 5%;
+  }
+
+  .hero-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    width: 100%;
+    gap: 3rem;
+    position: relative; z-index: 2;
+  }
+
+  .hero-image-wrap {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .hero-image-wrap img {
+    width: 100%;
+    max-width: 560px;
+    height: 520px;
+    object-fit: cover;
+    border-radius: 32px;
+    display: block;
+    mask-image:
+      linear-gradient(to left, transparent 0%, black 30%),
+      linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+    mask-composite: intersect;
+    -webkit-mask-image:
+      linear-gradient(to left, transparent 0%, black 30%),
+      linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+    -webkit-mask-composite: destination-in;
+    filter: brightness(0.75) saturate(1.3);
+    box-shadow: -20px 0 60px rgba(0,229,255,0.08), 20px 20px 60px rgba(0,0,0,0.5);
+  }
+
+  @media (max-width: 900px) {
+    .hero-layout { grid-template-columns: 1fr; }
+    .hero-image-wrap { display: none; }
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 60% 50%, rgba(21,101,192,0.35) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 80% at 20% 80%, rgba(0,229,255,0.12) 0%, transparent 60%),
+                linear-gradient(180deg, var(--deep) 0%, #071020 100%);
+  }
+
+  /* Animated water ripples */
+  .ripple {
+    position: absolute; border-radius: 50%;
+    border: 1px solid rgba(0,229,255,0.2);
+    animation: ripple 6s ease-out infinite;
+  }
+  .ripple:nth-child(1) { width: 300px; height: 300px; bottom: 10%; right: 15%; animation-delay: 0s; }
+  .ripple:nth-child(2) { width: 500px; height: 500px; bottom: 5%; right: 10%; animation-delay: 1.5s; }
+  .ripple:nth-child(3) { width: 700px; height: 700px; bottom: 0%; right: 5%; animation-delay: 3s; }
+
+  @keyframes ripple {
+    0% { opacity: 0.6; transform: scale(0.8); }
+    100% { opacity: 0; transform: scale(1.2); }
+  }
+
+  .hero-content {
+    position: relative;
+    animation: fadeUp 1s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--aqua);
+    border: 1px solid rgba(0,229,255,0.4);
+    padding: 0.4rem 1rem; border-radius: 50px;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 1s 0.2s ease both;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 900; line-height: 1.05;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 1s 0.3s ease both;
+  }
+  h1 em { font-style: italic; color: var(--aqua); }
+
+  .hero p {
+    font-size: 1.1rem; line-height: 1.7;
+    color: var(--muted); max-width: 500px;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 1s 0.4s ease both;
+  }
+
+  .hero-btns {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    animation: fadeUp 1s 0.5s ease both;
+  }
+  .btn-primary {
+    background: var(--aqua); color: var(--deep);
+    padding: 0.9rem 2rem; border-radius: 50px;
+    font-weight: 700; font-size: 0.95rem;
+    text-decoration: none; letter-spacing: 0.03em;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 30px rgba(0,229,255,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(0,229,255,0.5); }
+  .btn-secondary {
+    border: 1px solid rgba(0,229,255,0.4); color: var(--white);
+    padding: 0.9rem 2rem; border-radius: 50px;
+    font-weight: 500; font-size: 0.95rem;
+    text-decoration: none; transition: background 0.3s;
+  }
+  .btn-secondary:hover { background: rgba(0,229,255,0.1); }
+
+  /* WAVE DIVIDER */
+  .wave {
+    width: 100%; overflow: hidden; line-height: 0;
+    background: var(--deep);
+  }
+  .wave svg { display: block; }
+
+  /* SECTIONS */
+  section { padding: 6rem 5%; }
+
+  .section-tag {
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--aqua);
+    margin-bottom: 1rem; display: block;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700; line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  /* SERVICES */
+  #services { background: var(--navy); }
+  .services-header { text-align: center; margin-bottom: 4rem; }
+  .services-header p { color: var(--muted); max-width: 500px; margin: 0 auto; line-height: 1.7; }
+
+  .services-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem; max-width: 1100px; margin: 0 auto;
+  }
+
+  .service-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(0,229,255,0.1);
+    border-radius: 20px; padding: 2.5rem;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .service-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--aqua), transparent);
+    transform: scaleX(0); transition: transform 0.4s;
+  }
+  .service-card:hover { transform: translateY(-6px); border-color: rgba(0,229,255,0.3); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+  .service-card:hover::before { transform: scaleX(1); }
+
+  .service-icon {
+    width: 56px; height: 56px; border-radius: 16px;
+    background: rgba(0,229,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.5rem; font-size: 1.6rem;
+  }
+  .service-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 700; margin-bottom: 0.8rem;
+  }
+  .service-card p { color: var(--muted); line-height: 1.7; font-size: 0.95rem; }
+
+  .service-list { list-style: none; margin-top: 1.2rem; }
+  .service-list li {
+    color: var(--muted); font-size: 0.9rem; padding: 0.3rem 0;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .service-list li::before { content: '→'; color: var(--aqua); font-size: 0.85rem; }
+
+  /* WHY US */
+  #why {
+    background: var(--deep);
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5rem; align-items: center;
+    max-width: 1100px; margin: 0 auto; padding: 6rem 5%;
+    width: 100%;
+  }
+  .why-visual {
+    position: relative; aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pool-graphic {
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #29b6f6, #0a4f8a 60%, #061428);
+    box-shadow: 0 0 80px rgba(41,182,246,0.4), inset 0 0 60px rgba(0,229,255,0.1);
+    position: relative; overflow: hidden;
+  }
+  .pool-graphic::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 60%;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 8px,
+      rgba(255,255,255,0.05) 8px,
+      rgba(255,255,255,0.05) 9px
+    );
+    animation: wave-move 3s linear infinite;
+  }
+  @keyframes wave-move {
+    from { transform: translateY(0); }
+    to { transform: translateY(-9px); }
+  }
+
+  .stat-badge {
+    position: absolute;
+    background: var(--navy); border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 14px; padding: 1rem 1.2rem; text-align: center;
+  }
+  .stat-badge:nth-child(2) { top: 5%; right: 0; }
+  .stat-badge:nth-child(3) { bottom: 10%; left: 0; }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 900; color: var(--aqua);
+    display: block;
+  }
+  .stat-label { font-size: 0.75rem; color: var(--muted); }
+
+  .why-content h2 { margin-bottom: 1.5rem; }
+  .why-content p { color: var(--muted); line-height: 1.8; margin-bottom: 2rem; }
+
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+  .feature-list li {
+    display: flex; align-items: flex-start; gap: 1rem;
+    padding: 1rem 1.2rem; border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .feature-icon { color: var(--aqua); font-size: 1.2rem; margin-top: 2px; flex-shrink: 0; }
+  .feature-list li div strong { display: block; margin-bottom: 0.2rem; font-size: 0.95rem; }
+  .feature-list li div span { font-size: 0.85rem; color: var(--muted); }
+
+  /* CONTACT */
+  #contact { background: var(--navy); }
+  .contact-inner {
+    max-width: 700px; margin: 0 auto; text-align: center;
+  }
+  .contact-inner h2 { margin-bottom: 1rem; }
+  .contact-inner > p { color: var(--muted); line-height: 1.7; margin-bottom: 3rem; }
+
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; text-align: left; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  label { font-size: 0.8rem; font-weight: 500; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; }
+  input, textarea, select {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(0,229,255,0.15);
+    border-radius: 10px; padding: 0.85rem 1rem;
+    color: var(--white); font-family: inherit; font-size: 0.95rem;
+    outline: none; transition: border-color 0.3s;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--aqua); }
+  textarea { resize: vertical; min-height: 120px; }
+  select option { background: var(--navy); }
+  .form-submit {
+    background: var(--aqua); color: var(--deep);
+    border: none; border-radius: 50px;
+    padding: 1rem 2.5rem; font-weight: 700;
+    font-size: 1rem; font-family: inherit;
+    cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+    align-self: center; margin-top: 0.5rem;
+    box-shadow: 0 0 30px rgba(0,229,255,0.25);
+  }
+  .form-submit:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(0,229,255,0.5); }
+
+  /* FOOTER */
+  footer {
+    background: #060f1c;
+    padding: 3rem 5%;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+    border-top: 1px solid rgba(0,229,255,0.08);
+  }
+  footer .logo { font-size: 1.3rem; }
+  footer p { font-size: 0.85rem; color: var(--muted); }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { font-size: 0.85rem; color: var(--muted); text-decoration: none; transition: color 0.3s; }
+  .footer-links a:hover { color: var(--aqua); }
+
+  /* Fix anchor offset for fixed navbar */
+  #services, #why, #contact {
+    scroll-margin-top: 80px;
+  }
+
+  @media (max-width: 768px) {
+    nav ul { display: none; }
+    #why { grid-template-columns: 1fr; gap: 3rem; }
+    .why-visual { display: none; }
+    .form-row { grid-template-columns: 1fr; }
+    footer { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Crystal<span>Pool</span></div>
+  <ul>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#why">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#contact" class="nav-cta">Get a Quote</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="ripple"></div>
+    <div class="ripple"></div>
+    <div class="ripple"></div>
+  </div>
+  <div class="hero-layout">
+    <div class="hero-content">
+      <span class="hero-tag">Pool Maintenance & Construction</span>
+      <h1>Your Pool,<br><em>Perfectly</em><br>Crystal Clear</h1>
+      <p>From stunning custom builds to expert weekly maintenance, CrystalPool delivers the pristine, resort-quality pool experience you deserve — every single day.</p>
+      <div class="hero-btns">
+        <a href="#contact" class="btn-primary">Get a Free Quote</a>
+        <a href="#services" class="btn-secondary">Our Services</a>
+      </div>
+    </div>
+    <div class="hero-image-wrap">
+      <img
+        src="https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=900&q=80"
+        alt="Luxury swimming pool with glowing blue water"
+      />
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-header">
+    <span class="section-tag">What We Do</span>
+    <h2>Expert Pool Services</h2>
+    <p>Whether you're dreaming of a brand-new pool or need reliable upkeep, we've got every drop covered.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon">🏗️</div>
+      <h3>Pool Construction</h3>
+      <p>We design and build custom pools tailored to your space, style, and budget — from concept to first swim.</p>
+      <ul class="service-list">
+        <li>Custom inground pools</li>
+        <li>Infinity & lap pools</li>
+        <li>Deck & landscaping</li>
+        <li>Water features & lighting</li>
+      </ul>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🔧</div>
+      <h3>Pool Maintenance</h3>
+      <p>Regular maintenance keeps your pool sparkling, safe, and swim-ready all year long without the hassle.</p>
+      <ul class="service-list">
+        <li>Weekly cleaning & skimming</li>
+        <li>Chemical balancing</li>
+        <li>Filter & pump servicing</li>
+        <li>Seasonal openings & closings</li>
+      </ul>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">⚡</div>
+      <h3>Repairs & Upgrades</h3>
+      <p>Fast, reliable fixes and smart upgrades to modernize your pool and keep it running at peak performance.</p>
+      <ul class="service-list">
+        <li>Leak detection & repair</li>
+        <li>Pump & heater replacement</li>
+        <li>LED lighting upgrades</li>
+        <li>Smart pool automation</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="why-visual">
+    <div class="pool-graphic"></div>
+    <div class="stat-badge">
+      <span class="stat-num">100+</span>
+      <span class="stat-label">Pools Built</span>
+    </div>
+    <div class="stat-badge">
+      <span class="stat-num">15+</span>
+      <span class="stat-label">Years Experience</span>
+    </div>
+  </div>
+  <div class="why-content">
+    <span class="section-tag">Why CrystalPool</span>
+    <h2>The Standard for Pool Excellence</h2>
+    <p>We combine craftsmanship, cutting-edge equipment, and genuine care to deliver results that go far beyond a clean pool.</p>
+    <ul class="feature-list">
+      <li>
+        <span class="feature-icon">✦</span>
+        <div>
+          <strong>Licensed & Insured</strong>
+          <span>Fully certified professionals you can trust with your home and family.</span>
+        </div>
+      </li>
+      <li>
+        <span class="feature-icon">✦</span>
+        <div>
+          <strong>Transparent Pricing</strong>
+          <span>No hidden fees. Clear quotes before any work begins.</span>
+        </div>
+      </li>
+      <li>
+        <span class="feature-icon">✦</span>
+        <div>
+          <strong>Responsive Service</strong>
+          <span>Same-day and emergency support when you need it most.</span>
+        </div>
+      </li>
+      <li>
+        <span class="feature-icon">✦</span>
+        <div>
+          <strong>Eco-Friendly Approach</strong>
+          <span>Smart chemical management that's safe for your family and the planet.</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <span class="section-tag">Get In Touch</span>
+    <h2>Request a Free Quote</h2>
+    <p>Tell us about your pool project or maintenance needs and we'll get back to you within 24 hours.</p>
+    <form class="contact-form" id="contactForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input type="text" id="firstName" name="first_name" placeholder="John" required>
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input type="text" id="lastName" name="last_name" placeholder="Smith" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="john@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input type="tel" id="phone" name="phone" placeholder="(555) 000-0000">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="service">Service Interested In</label>
+        <select id="service" name="service" required>
+          <option value="">Select a service…</option>
+          <option>Pool Construction</option>
+          <option>Pool Maintenance</option>
+          <option>Repairs & Upgrades</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" placeholder="Tell us about your pool or project…"></textarea>
+      </div>
+      <button type="submit" class="form-submit" id="submitBtn">Send My Request →</button>
+
+      <!-- Success message (hidden by default) -->
+      <div id="successMsg" style="display:none; text-align:center; margin-top:1rem;">
+        <div style="background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.4); border-radius: 14px; padding: 1.5rem 2rem;">
+          <div style="font-size:2rem; margin-bottom:0.5rem;">✓</div>
+          <strong style="color: var(--aqua); font-size:1.1rem;">Request sent!</strong>
+          <p style="color: var(--muted); margin-top:0.4rem; font-size:0.9rem;">We'll get back to you within 24 hours.</p>
+        </div>
+      </div>
+
+      <!-- Error message (hidden by default) -->
+      <div id="errorMsg" style="display:none; text-align:center; margin-top:1rem;">
+        <div style="background: rgba(255,80,80,0.1); border: 1px solid rgba(255,80,80,0.3); border-radius: 14px; padding: 1.2rem 2rem;">
+          <strong style="color:#ff6b6b;">Something went wrong.</strong>
+          <p style="color: var(--muted); margin-top:0.3rem; font-size:0.9rem;">Please try again or email us directly at <a href="mailto:gmontrichard@hotmail.com" style="color:var(--aqua);">gmontrichard@hotmail.com</a></p>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="logo">Crystal<span>Pool</span></div>
+  <p>© 2026 CrystalPool. All rights reserved.</p>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#contact">Contact</a>
+  </div>
+</footer>
+
+<script>
+  // ─── Formspree form submission ───────────────────────────────────────────────
+  // Formspree will forward submissions to gmontrichard@hotmail.com.
+  // To activate: sign up free at https://formspree.io, create a form,
+  // and replace "YOUR_FORM_ID" below with your actual Formspree form ID.
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/mnjbynpd";
+
+  document.getElementById('contactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const btn = document.getElementById('submitBtn');
+    const successMsg = document.getElementById('successMsg');
+    const errorMsg = document.getElementById('errorMsg');
+
+    // Reset messages
+    successMsg.style.display = 'none';
+    errorMsg.style.display = 'none';
+
+    // Loading state
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+
+    const formData = new FormData(this);
+
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (response.ok) {
+        // Success
+        btn.style.display = 'none';
+        successMsg.style.display = 'block';
+        this.reset();
+      } else {
+        throw new Error('Server error');
+      }
+    } catch (err) {
+      // Error
+      btn.textContent = 'Send My Request →';
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      errorMsg.style.display = 'block';
+    }
+  });
+
+  // ─── Fade-in on scroll ───────────────────────────────────────────────────────
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.service-card, .feature-list li').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
